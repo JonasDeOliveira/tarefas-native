@@ -3,11 +3,16 @@ import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
+
+import commonStyles from '../commonStyles'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default props => {
 
     const formattedDate = moment(props.estimateAt).locale('pt-br').format('ddd, D [de] MMMM')
-    
+    const doneOrNotStyle = props.doneAt != null ? {textDecorationLine: 'line-through'} : {}
+
     function getCheckView(doneAt) {
         if (doneAt != null) {
             return (
@@ -23,19 +28,46 @@ export default props => {
             </View>
         )
     }
+
+    const getRightContent = () => {
+        return (
+            <TouchableOpacity style={styles.right} 
+                onPress={() => console.warn('deletou direita')}>
+                <Icon name="trash" size={30} color='#fff'/>
+            </TouchableOpacity>
+        )
+    }
+
+    const getLeftContent = () => {
+        return (
+            <TouchableOpacity style={styles.left}>
+                <Icon name="trash" size={30} color='#fff' style={styles.excludeIcon}/>
+                <Text style={styles.excludeText}>
+                    Excluir
+                </Text>
+            </TouchableOpacity>
+        )
+    }
     
     return (
-        <View style={styles.container}>
-            <TouchableWithoutFeedback>
-                <View style={styles.checkContainer}>
-                    {getCheckView(props.doneAt)}
+        <Swipeable 
+            renderRightActions={getRightContent}
+            renderLeftActions={getLeftContent}
+            onSwipeableLeftOpen={() => console.warn('deletou esquerda')}
+            leftThreshold={150}>
+            <View style={styles.container}>
+                <TouchableWithoutFeedback>
+                    <View style={styles.checkContainer}>
+                        {getCheckView(props.doneAt)}
+                    </View>
+                </TouchableWithoutFeedback>
+                <View>
+                    <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
+                    <Text style={styles.date}>{formattedDate}</Text>
                 </View>
-            </TouchableWithoutFeedback>
-            <View>
-                <Text style={styles.desc}>{props.desc}</Text>
-                <Text style={styles.date}>{formattedDate}</Text>
             </View>
-        </View>
+        </Swipeable>
+        
     )
 }
 
@@ -67,5 +99,33 @@ const styles = StyleSheet.create({
         backgroundColor: '#4d7031',
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    desc: {
+        fontSize: 16,
+        color: commonStyles.colors.mainText
+    },
+    date: {
+        color: commonStyles.colors.subText,
+        fontSize: 12
+    },
+    right: {
+        backgroundColor: 'red',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20
+    },
+    left: {
+        flexDirection: 'row',
+        flex: 1,
+        backgroundColor: 'red',
+        alignItems: 'center'
+    },
+    excludeIcon: {
+        marginLeft: 10
+    },
+    excludeText: {
+        color: commonStyles.colors.secondary,
+        fontSize: 20,
+        margin: 10
     }
 })
