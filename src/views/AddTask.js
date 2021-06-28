@@ -17,6 +17,50 @@ export default class AddTask extends Component {
 
     state = {...initialState}
 
+    save = () => {
+        const newTask = {
+            ...this.state
+        }
+
+        // if (this.props.onSave) {
+        //     this.props.onSave(newTask)
+        // }
+        //O código abaixo faz a mesma coisa que o if acima
+        this.props.onSave && this.props.onSave(newTask)
+
+        this.setState({...initialState})
+    }
+
+    getDateTimePicker = () => {
+        let datePicker = <DateTimePicker 
+            value={this.state.date} 
+            onChange={(event, date) => {
+                if (date) {
+                    this.setState({date: date, showDatePicker: false})
+                    return
+                }
+            }} 
+            mode='date'/>
+        
+        const dateString = moment(this.state.date).format('ddd, D [de] MMMM [de] YYYY')
+
+        if (Platform.OS == 'android') {
+            datePicker = (
+                <View>
+                    <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                        <Text>
+                            {dateString}
+                        </Text>
+                    </TouchableOpacity>
+                    {this.state.showDatePicker && datePicker}
+                </View>
+                
+            )
+        }
+
+        return datePicker
+    }
+
     render() {
         return (
             <Modal transparent={true} visible={this.props.isVisible}
@@ -30,11 +74,12 @@ export default class AddTask extends Component {
                         placeholder='Informe a descrição'
                         onChangeText={desc => this.setState({ desc })}
                         value={this.state.desc}/>
+                    {this.getDateTimePicker()}
                     <View style={styles.buttons}>
                         <TouchableOpacity>
                             <Text style={styles.button}>Cancelar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={this.save}>
                             <Text style={styles.button}>Salvar</Text>
                         </TouchableOpacity>
                     </View>

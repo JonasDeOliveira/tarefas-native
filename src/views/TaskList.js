@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, 
-    ImageBackground, TouchableOpacity } from 'react-native'
+    ImageBackground, TouchableOpacity, Alert } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
 import 'moment/locale/pt-br'
@@ -13,13 +13,19 @@ import AddTask from '../views/AddTask'
 
 const initialState = {
     showDoneTasks: true,
-    showAddTask: true,
+    showAddTask: false,
     visibleTasks: [],
     tasks: []
 }
 export default class TaskList extends Component {
 
     state = {...initialState}
+
+    addTask = newTask => {
+        if (!newTask.desc || !newTask.desc.trim()) {
+            Alert.alert('Dados inválidos', 'Descrição não informada!')
+        }
+    }
 
     render() {
 
@@ -30,7 +36,7 @@ export default class TaskList extends Component {
 
         return (
             <View style={styles.container}>
-                <AddTask isVisible={this.state.showAddTask}/>
+                <AddTask isVisible={this.state.showAddTask} onSave={this.addTask}/>
                 <ImageBackground source={todayImage} 
                     style={styles.background}>
                     <View style={styles.iconBar}>
