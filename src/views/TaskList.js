@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, 
-    ImageBackground, TouchableOpacity, Alert } from 'react-native'
+    ImageBackground, TouchableOpacity, 
+    Alert, FlatList } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import Constants from 'expo-constants'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import commonStyles from '../commonStyles'
 import todayImage from '../../assets/imgs/today.jpg'
@@ -21,10 +23,47 @@ export default class TaskList extends Component {
 
     state = {...initialState}
 
+    componentDidMount = async () => {
+        console.warn('montou')
+    }
+
+    filterTasks = async () => {
+        // await AsyncStorage.setItem('tasksState', JSON.stringify(this.state))
+
+    }
+
+    toggleFilter = () => {
+
+    }
+    
+
+
+
     addTask = newTask => {
         if (!newTask.desc || !newTask.desc.trim()) {
             Alert.alert('Dados inválidos', 'Descrição não informada!')
         }
+
+        let tasks = [...this.state.tasks]
+        tasks.push({
+            id: Math.random(),
+            desc: newTask.desc,
+            estimateAt: newTask.date,
+            doneAt: null
+        })
+
+        this.setState({ tasks, showAddTask: false}, this.filterTasks)
+        console.warn(this.state.tasks)
+        
+
+    }
+
+    toggleTask = tasksId => {
+
+    }
+
+    deleteTask = id => {
+
     }
 
     render() {
@@ -40,7 +79,7 @@ export default class TaskList extends Component {
                 <ImageBackground source={todayImage} 
                     style={styles.background}>
                     <View style={styles.iconBar}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={this.toggleFilter}>
                             <Icon name={this.state.showDoneTasks 
                                 ? 'eye': 'eye-slash'}
                                 size={30} 
@@ -54,20 +93,13 @@ export default class TaskList extends Component {
                 </ImageBackground>
                 <View style={styles.containerList}>
 
-                    <Task desc="Assistir Filme" 
-                        estimateAt={new Date()}
-                        doneAt={new Date()}/>
-
-                    <Task desc="Lavar Roupa" 
-                        estimateAt={new Date()}
-                        doneAt={null}/>
-
-                    <Task desc="varrer a casa" 
-                        estimateAt={new Date()}
-                        doneAt={new Date()}/>
+                    <FlatList data={this.state.tasks}
+                        keyExtractor={item => `${item.id}`}
+                        renderItem={({item}) => <Task {...item}/>}/>
 
                 </View>
-                <TouchableOpacity style={styles.addButton}>
+                <TouchableOpacity style={styles.addButton}
+                    onPress={() => this.setState({showAddTask: true})}>
                     <Icon name='plus' size={30}
                         color={commonStyles.colors.secondary}/>
                 </TouchableOpacity>
