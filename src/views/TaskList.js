@@ -24,26 +24,26 @@ export default class TaskList extends Component {
     state = {...initialState}
 
     componentDidMount = async () => {
-        // const stateString = await AsyncStorage.getItem('taskState')
-        // const state = JSON.parse(stateString) || initialSate
-        // this.setState(state, this.filterTasks)
+        const stateString = await AsyncStorage.getItem('taskState')
+        const state = JSON.parse(stateString) || initialState
+        this.setState(state, this.filterTasks)
     }
 
     toggleFilter = () => {
-    //     this.setState({showDoneTasks: !this.state.showDoneTasks }, this.filterTasks)
+        this.setState({showDoneTasks: !this.state.showDoneTasks }, this.filterTasks)
     }
 
     filterTasks = () => {
-    //     let visibleTasks = null
-    //     if (this.state.showDoneTasks) {
-    //         visibleTasks = [...this.state.tasks]
-    //     } else {
-    //         const pending = task => task.doneAt == null
-    //         visibleTasks = this.state.tasks.filter(pending)
-    //     }
+        let visibleTasks = null
+        if (this.state.showDoneTasks) {
+            visibleTasks = [...this.state.tasks]
+        } else {
+            const pending = task => task.doneAt == null
+            visibleTasks = this.state.tasks.filter(pending)
+        }
         
-    //     this.setState({visibleTasks})
-    //     AsyncStorage.setItem('taskState', JSON.stringify(this.state))
+        this.setState({visibleTasks})
+        AsyncStorage.setItem('taskState', JSON.stringify(this.state))
     }
     
 
@@ -64,24 +64,23 @@ export default class TaskList extends Component {
         })
 
         this.setState({ tasks, showAddTask: false}, this.filterTasks)
-        console.warn(this.state.tasks)
 
     }
 
     toggleTask = taskId => {
-    //     const tasks =  [...this.state.tasks]
-    //     tasks.forEach(task => {
-    //         if (task.id == taskId) {
-    //             task.doneAt = task.doneAt ? null : new Date()
-    //         }
-    //     })
+        const tasks =  [...this.state.tasks]
+        tasks.forEach(task => {
+            if (task.id == taskId) {
+                task.doneAt = task.doneAt ? null : new Date()
+            }
+        })
 
-    //     this.setState({ tasks }, this.filterTasks)
+        this.setState({ tasks }, this.filterTasks)
     }
 
     deleteTask = id => {
-    //     const tasks = this.state.tasks.filter(task => task.id !== id)
-    //     this.setState({ tasks }, this.filterTasks)
+        const tasks = this.state.tasks.filter(task => task.id != id)
+        this.setState({ tasks }, this.filterTasks)
     }
 
     render() {
@@ -99,8 +98,7 @@ export default class TaskList extends Component {
                 <ImageBackground source={todayImage} 
                     style={styles.background}>
                     <View style={styles.iconBar}>
-                        <TouchableOpacity>
-                        {/* <TouchableOpacity onPress={this.toggleFilter}> */}
+                        <TouchableOpacity onPress={this.toggleFilter}>
                             <Icon name={this.state.showDoneTasks 
                                 ? 'eye': 'eye-slash'}
                                 size={30} 
@@ -114,11 +112,14 @@ export default class TaskList extends Component {
                 </ImageBackground>
                 <View style={styles.containerList}>
 
-                    <FlatList data={this.state.tasks}
-                    // <FlatList data={this.state.visibleTasks}
+                    <FlatList data={this.state.visibleTasks}
                         keyExtractor={item => `${item.id}`}
-                        renderItem={({item}) => <Task {...item}/>}/>
-                        {/* renderItem={({item}) => <Task {...item} onDelete={this.deleteTask} onToggleTask={this.toggleTask}/>}/> */}
+                        renderItem={
+                            ({item}) => <Task {...item} 
+                                            onDelete={this.deleteTask} 
+                                            onToggleTask={this.toggleTask}/>
+                        }
+                    />       
 
                 </View>
                 <TouchableOpacity style={styles.addButton}

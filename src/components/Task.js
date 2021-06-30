@@ -1,18 +1,17 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, StyleSheet, 
+    TouchableWithoutFeedback, TouchableOpacity } from 'react-native'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 
 import commonStyles from '../commonStyles'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default props => {
 
-    // const date = props.doneAt ? props.doneAt : props.estimateAt
-    // const formattedDate = moment(date).locale('pt-br').format('ddd, D [de] MMMM')
-    const formattedDate = moment(props.estimateAt).locale('pt-br').format('ddd, D [de] MMMM')
+    const date = props.doneAt ? props.doneAt : props.estimateAt
+    const formattedDate = moment(date).locale('pt-br').format('ddd, D [de] MMMM')
     const doneOrNotStyle = props.doneAt != null ? {textDecorationLine: 'line-through'} : {}
 
     function getCheckView(doneAt) {
@@ -34,7 +33,7 @@ export default props => {
     const getRightContent = () => {
         return (
             <TouchableOpacity style={styles.right} 
-                onPress={() => console.warn('deletou direita')}>
+                onPress={() => props.onDelete && props.onDelete(props.id)}>
                 <Icon name="trash" size={30} color='#fff'/>
             </TouchableOpacity>
         )
@@ -55,17 +54,11 @@ export default props => {
         <Swipeable 
             renderRightActions={getRightContent}
             renderLeftActions={getLeftContent}
-            onSwipeableLeftOpen={() => console.warn('deletou esquerda')}
+            onSwipeableLeftOpen={() => props.onDelete && props.onDelete(props.id)}
             leftThreshold={150}>
-        {/* <Swipeable 
-            renderRightActions={getRightContent}
-            renderLeftActions={getLeftContent}
-            leftThreshold={150}
-            onSwipeableLeftOpen={() => props.onDelete && props.onDelete(props.id)}> */}
             <View style={styles.container}>
-                <TouchableWithoutFeedback>
-                {/* <TouchableWithoutFeedback
-                    onPress={() => props.onToggleTask(props.id)}> */}
+                <TouchableWithoutFeedback
+                    onPress={() => props.onToggleTask(props.id)}>
                     <View style={styles.checkContainer}>
                         {getCheckView(props.doneAt)}
                     </View>
