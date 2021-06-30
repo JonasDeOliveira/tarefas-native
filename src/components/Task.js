@@ -10,6 +10,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export default props => {
 
+    // const date = props.doneAt ? props.doneAt : props.estimateAt
+    // const formattedDate = moment(date).locale('pt-br').format('ddd, D [de] MMMM')
     const formattedDate = moment(props.estimateAt).locale('pt-br').format('ddd, D [de] MMMM')
     const doneOrNotStyle = props.doneAt != null ? {textDecorationLine: 'line-through'} : {}
 
@@ -55,8 +57,15 @@ export default props => {
             renderLeftActions={getLeftContent}
             onSwipeableLeftOpen={() => console.warn('deletou esquerda')}
             leftThreshold={150}>
+        {/* <Swipeable 
+            renderRightActions={getRightContent}
+            renderLeftActions={getLeftContent}
+            leftThreshold={150}
+            onSwipeableLeftOpen={() => props.onDelete && props.onDelete(props.id)}> */}
             <View style={styles.container}>
                 <TouchableWithoutFeedback>
+                {/* <TouchableWithoutFeedback
+                    onPress={() => props.onToggleTask(props.id)}> */}
                     <View style={styles.checkContainer}>
                         {getCheckView(props.doneAt)}
                     </View>

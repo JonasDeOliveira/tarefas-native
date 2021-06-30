@@ -18,7 +18,7 @@ export default class AddTask extends Component {
     state = {...initialState}
 
     save = () => {
-        const newTask = {
+        const taskCopy = {
             ...this.state
         }
 
@@ -26,7 +26,7 @@ export default class AddTask extends Component {
         //     this.props.onSave(newTask)
         // }
         //O código abaixo faz a mesma coisa que o if acima
-        this.props.onSave && this.props.onSave(newTask)
+        this.props.onSave && this.props.onSave(taskCopy)
 
         this.setState({...initialState})
     }
@@ -48,7 +48,7 @@ export default class AddTask extends Component {
             datePicker = (
                 <View>
                     <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
-                        <Text>
+                        <Text style={styles.date}>
                             {dateString}
                         </Text>
                     </TouchableOpacity>
@@ -65,7 +65,11 @@ export default class AddTask extends Component {
         return (
             <Modal transparent={true} visible={this.props.isVisible}
             animationType='slide'>
-                <TouchableWithoutFeedback>
+                {/* <Modal transparent={true} visible={this.props.isVisible}
+                onRequestClose={this.props.onCancel}
+                animationType='slide'> */}
+                <TouchableWithoutFeedback 
+                    onPress={this.props.onCancel}>
                     <View style={styles.background}></View>
                 </TouchableWithoutFeedback>
                 <View style={styles.container}>
@@ -76,7 +80,7 @@ export default class AddTask extends Component {
                         value={this.state.desc}/>
                     {this.getDateTimePicker()}
                     <View style={styles.buttons}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={this.props.onCancel}>
                             <Text style={styles.button}>Cancelar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={this.save}>
@@ -84,7 +88,8 @@ export default class AddTask extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback 
+                    onPress={this.props.onCancel}> 
                     <View style={styles.background}></View>
                 </TouchableWithoutFeedback>
 
@@ -125,5 +130,9 @@ const styles = StyleSheet.create({
         color: commonStyles.colors.today,
         margin: 20,
         marginRight: 30
+    },
+    date: {
+        fontSize: 20,
+        marginLeft: 15
     }
 })
